@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+  watchman watch-list
+else
+  watchman trigger-list "$@"
+fi
