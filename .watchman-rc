@@ -4,6 +4,7 @@ append_to_path "$(dirname "${BASH_SOURCE[0]}")"
 
 alias wm="watchman"
 
+alias wmx="watchman-filter-exec.py"
 alias wml="watchman-list"
 alias wmd="watchman-delete"
 
