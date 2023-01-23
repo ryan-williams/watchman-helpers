@@ -41,7 +41,7 @@ def main(no_git_filter, prefix, verbose, args):
             ]
             vlog(f'Running: {shlex.join(cmd)}')
             check_call(cmd)
-        elif do_git_filter and file.startswith('.git/'):
+        elif do_git_filter and file.startswith('.git/') and not file.startswith('.git/.watchman'):
             vlog(f'Refreshing Git file list ({file})')
             git_files = list(filter(None, check_output(['git', 'ls-files']).decode().split('\n')))
         else:
