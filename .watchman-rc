@@ -10,15 +10,38 @@ alias wmd="watchman-delete"
 
 alias wmt="watchman -- trigger"
 
-alias wmtl="watchman trigger-list"
+watchman_trigger_list() {
+    if [ $# -eq 0 ]; then
+        set -- .
+    fi
+    watchman trigger-list "$@"
+}
+export -f watchman_trigger_list
+alias wmtl=watchman_trigger_list
 alias wmtd="watchman trigger-del"
 
 alias wmw="watchman watch"
-
 alias wmwl="watchman watch-list"
 alias wmwd="watchman watch-del"
+alias wmwp="watchman watch-project"
 
 alias wss="watchman shutdown-server"
 alias wq="watchman shutdown-server"
 
 alias wv="watchman version"
+
+watchman_log() {
+    ps aux | grep watchman | grep -o -- '--logfile=\S*' | awk -F= '{ print $2 }'
+}
+export -f watchman_log
+alias wmlg=watchman_log
+
+watchman_wait() {
+    if [ $# -eq 0 ]; then
+        set -- .
+    fi
+    watchman-wait -m0 "$@"
+}
+export -f watchman_wait
+alias ww=watchman_wait
+alias ww0=watchman_wait
