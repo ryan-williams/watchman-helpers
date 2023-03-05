@@ -1,5 +1,5 @@
 # watchman-helpers
-See [00-watchman.md](00-watchman.md) for a quickstart example
+See [watchman.md](watchman.md) for a quickstart example
 
 ## [`watchman-filter-exec.py`](./watchman-filter-exec.py)
 a.k.a. `wmx`: 
