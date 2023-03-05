@@ -7,6 +7,7 @@ I found [the `watchman` docs](https://facebook.github.io/watchman/) hard to foll
     - [1c. Remove a watched directory](#watch-del)
 - [2. Set up a "trigger": continuously run a command in response to changes](#trigger)
     - [2a. `rsync` a directory to a remote host](#rsync-example)
+        - [Is there a simpler way to trigger on all files?](#patterns)
         - [Factoring command to a file](#factor-command)
     - [2b. List active triggers for current directory](#trigger-list)
     - [2c. Delete trigger](#trigger-del)
@@ -55,12 +56,21 @@ In this example, we'll `rsync` the current directory to a remote host
 HOST=ec2                                       # configure this SSH host in your ~/.ssh/config
 DST_DIR="`basename`"                           # remote directory to mirror this one to; `basename` will target a directory with the same name on the remote host (under your $HOME directory on that host)
 trigger_name=ec2-sync                          # arbitrary name, used for `trigger-del` later
-trigger_patterns=('*' '.*')                    # trigger on all files in the current directory
+trigger_patterns=('**/*' '**/.*')              # trigger on all files in the current directory
 trigger_cmd=(rsync -avzh ./ "$HOST:$DST_DIR")  # rsync the current directory to the remote host/dir
 
 # Create the "trigger". It will begin running immediately and continuously (in response to file changes in the current directory)
 watchman -- trigger "$PWD" "$trigger_name" "${trigger_patterns[@]}" -- "${trigger_cmd[@]}"
 ```
+
+#### Is there a simpler way to trigger on all files? <a id="patterns"></a>
+The patterns `('**/*' '**/.*')` are the only way I've found to get all files recursively under the watched root (including "hidden" files and directories, that begin with a `.`). However, when creating the trigger I've had the watchman logs print an error like:
+
+```
+trigger <dir>:<name> failed: posix_spawnp: Argument list too long
+```
+
+Apparently there is an inital run attempt that includes all eligible files as positional arguments. Maybe there's a better way, or workaround 🤷‍♂️. The "[Simple Pattern Syntax](https://facebook.github.io/watchman/docs/simple-query.html)" page doesn't seem to say, and single globs like `(`'*' '.*')` (Bash array syntax, as above) did not trigger for changes in subfolders.
 
 #### Factoring command to a file <a id="factor-command"></a>
 If your command gets more complex, you might want to factor it out to its own file, e.g.:
